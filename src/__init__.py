@@ -1,2 +1,2 @@
-
-from src.run import frun 
+from src.run import *
+from src.make_proyect import *

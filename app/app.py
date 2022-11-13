@@ -3,10 +3,8 @@ from tkinter import ttk
 from tkinter import messagebox, filedialog
 from tkinter import *
 
-#import pandas as pd
+import src
 
-#import src
-#import include
 
 class Project_Generator(Frame):
     def __init__(self, master=None) -> None:
@@ -16,23 +14,31 @@ class Project_Generator(Frame):
 
         #Se crea ventana
         self.create_widgets()
-    
 
-    def click(self):
-        print('click')
+    def create_project(self):
+            path = self.entryPath.get()
+            project_name = self.entryProject.get().replace('-', '_'). replace(' ','')
+            URL = self.entryURL.get()
+            token = self.entryToken.get()
+            
 
-    def Save_As(self):
-        files = [('Excel Document', '*.xlsx'),
-                ('CSV', '*.csv'),
-                ('All Files', '*.*')
-                ]
-        folder_selected = filedialog.asksaveasfile(filetypes=files, defaultextension= files)
+            if messagebox.askyesno('Warning!', f'Project will be created at {path + project_name}.\n Do you want to continue?'):
+                if not src.create_directories(path, project_name):
+                    if messagebox.askyesno('Warning!', 'The project already exists, do you want to delete the old project?'):
+                        src.create_directories(path, project_name, selector=1)
+                        TApp, TRun = src.get_app(project_name, URL, token, path+project_name)
+                        src.create_python_files(path, project_name, TApp, TRun)
+                        
+                else:
+                    TApp, TRun = src.get_app(project_name, URL, token, path+project_name)
+                    src.create_python_files(path, project_name, TApp, TRun)
 
-        # df = pd.DataFrame.from_records(self.registros)
-        # if '.csv' in folder_selected.name:
-        #     df.to_csv(folder_selected.name)
-        # if '.xlsx' in folder_selected.name:
-        #     df.to_excel(folder_selected.name)
+
+    def get_path(self, *args):
+        path = filedialog.askdirectory()
+        if path:
+            self.entryPath.delete(0, END)
+            self.entryPath.insert(0, path+'/')
 
     def create_widgets(self):
         self.canvas1 = Canvas(self, bg='white',height=450, width=800)
@@ -45,17 +51,19 @@ class Project_Generator(Frame):
 
         #Button btnGetproject
         self.btnGetproject_img = PhotoImage(file="./resources/btnGetproject.png")
-        self.btnGetproject_btn = Button(self,image=self.btnGetproject_img, borderwidth = 0, highlightthickness = 0, relief = "flat", command=self.click)
+        self.btnGetproject_btn = Button(self,image=self.btnGetproject_img, borderwidth = 0, highlightthickness = 0, relief = "flat", command=self.create_project)
         self.btnGetproject_btn.place(x=465, y=385)
 
         #Button btnPath
         self.btnPath_img = PhotoImage(file="./resources/btnPath.png")
-        self.btnPath_btn = Button(self,image=self.btnPath_img, borderwidth = 0, highlightthickness = 0, relief = "flat", command=self.click)
+        self.btnPath_btn = Button(self,image=self.btnPath_img, borderwidth = 0, highlightthickness = 0, relief = "flat", command=self.get_path)
         self.btnPath_btn.place(x=718, y=73)
 
         #entryPath
         self.entryPath = Entry(self, bg='#eceeee', highlightthickness=0, bd=0)
         self.entryPath.place(x = 420, y = 72, width=274, height=28)
+        self.entryPath.insert(0,'C:/')
+        self.entryPath.bind("<1>", self.get_path)
 
         #entryProject
         self.entryProject = Entry(self, bg='#eceeee', highlightthickness=0, bd=0)
@@ -68,3 +76,5 @@ class Project_Generator(Frame):
         #entryToken
         self.entryToken = Entry(self, bg='#eceeee', highlightthickness=0, bd=0)
         self.entryToken.place(x = 420, y = 330, width=274, height=28)
+
+

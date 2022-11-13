@@ -1,2 +1,4 @@
+from include.figma_reader import *
 
-from include.thread import new_thread
+from include.btn import CBtn
+from include.entry import CEntry
