@@ -28,10 +28,14 @@ class Project_Generator(Frame):
                         src.create_directories(path, project_name, selector=1)
                         TApp, TRun = src.get_app(project_name, URL, token, path+project_name)
                         src.create_python_files(path, project_name, TApp, TRun)
+                        messagebox.showinfo('Successfully!', 'Se creo el proyecto!')
                         
                 else:
                     TApp, TRun = src.get_app(project_name, URL, token, path+project_name)
                     src.create_python_files(path, project_name, TApp, TRun)
+                    messagebox.showinfo('Successfully!', 'Se creo el proyecto!')
+            
+            
 
 
     def get_path(self, *args):
